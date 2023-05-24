@@ -7,10 +7,36 @@
 
 import SwiftUI
 
+struct ListItem: Identifiable {
+    
+    var id:UUID = UUID()
+    var text:String = ""
+}
+
+struct ListItemView: View {
+    @Binding var ListItem: ListItem
+    @State var buttonPressed:Bool = false
+    
+    var body: some View {
+        HStack {
+            Button {
+                buttonPressed.toggle()
+            } label: {
+                Image(buttonPressed ? "check" : "emptyCheck")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            TextField("List Item", text: $ListItem.text)
+                .font(.title2)
+        }
+    }
+}
 
 struct ContentView: View {
-    @State var toDoItems: [String] = [""]
-    @State var text: String = ""
+    @State var toDoItems = [ListItem()]
+    
     var body: some View {
         VStack {
             HStack {
@@ -19,33 +45,41 @@ struct ContentView: View {
                 Image("check")
                     .resizable()
                     .aspectRatio(contentMode: .fit )
-                    .frame(width: 35.0, height: 35)
+                    .frame(width: 30.0, height: 30)
             }
-            ForEach (toDoItems.indices, id: \.self) {index in
-                HStack {
-                    Button(" ") {
-                        
+            List {
+                ForEach(toDoItems.indices, id: \.self) { index in
+                    
+                    HStack {
+                        ListItemView(ListItem: $toDoItems[index])
                     }
-                    .padding(.horizontal)
-                    TextField("Next Item", text: $text )
-                    Spacer()
+                    
                 }
-            }
-
-            Spacer()
-            HStack {
-                Spacer(minLength: 0)
-                Button("New list") {
-                    toDoItems.append("")
-                }
-                Image("check")
-                    .resizable()
-                    .frame(width: 20, height: 20)
+                .padding()
             }
         }
         .padding()
+        
+        Spacer()
+        HStack {
+            Spacer(minLength: 0)
+            Button(action: {
+                toDoItems.append(ListItem())
+            }) {
+                HStack {
+                    Text("New Item")
+                        .font(.title2)
+                    Image("check")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding()
+        }
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
