@@ -10,7 +10,7 @@ import SwiftUI
 struct ListItem: Identifiable {
     
     var id:UUID = UUID()
-    var text:String =  ""
+    var text:String = ""   
 }
 
 struct ListItemView: View {
